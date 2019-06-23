@@ -19,3 +19,8 @@ Template container for wkhtmltopdf in HTTP server with PHP 7.3.
 ## Template philosophy
 This project does not provide finished solution, but only prepared container with
 configured features – feel free to write your own app inside now.
+
+### Thanks to
+ - @boromino for great [inspiration how to delete more temporary file from container](https://github.com/boromino/php-wkhtmltopdf/blob/master/Dockerfile),
+ - @ubidots for their [right way to extending fonts in linux](https://github.com/boromino/php-wkhtmltopdf/blob/master/Dockerfile),
+ - @elektro-wolle to goot point in [discussion about wkhtml's rendering bug](https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3585#issuecomment-321605209).
