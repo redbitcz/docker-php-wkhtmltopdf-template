@@ -1,5 +1,4 @@
 FROM php:7.3-apache-stretch
-MAINTAINER Jakub Bouček <pan@jakubboucek.cz>
 
 COPY fonts/ /usr/share/fonts/
 COPY fontconf/ /etc/fonts/conf.d/
