@@ -29,7 +29,7 @@ configured features – feel free to write your own app inside now.
 You can also just pull from image [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf). 
    
 ## Usage example
-1. Run ``docker run -v `pwd`:/out redbitcz/wkpdf wkhtmltopdf https://docs.docker.com/engine/reference/commandline/run/ /out/example.pdf``,
+1. Run ``docker run --rm -v `pwd`:/out redbitcz/wkpdf wkhtmltopdf https://docs.docker.com/engine/reference/commandline/run/ /out/example.pdf``,
    Docker create container from your image and here call `wkhtmltopdf` which create new PDF file `example.pdf` from docker's website.
    Contrainer is removed when `wkhtmltopdf` process ended.
 2. Open and see new PDF `example.pdf` created in current directory.
