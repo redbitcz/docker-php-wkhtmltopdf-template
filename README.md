@@ -4,6 +4,7 @@ Template container for wkhtmltopdf in HTTP server with PHP 7.3.
 
 ## Main features
 - current version of wkhtmltopdf
+- current version of Apache (with `mod_expires` and `mod_rewrite` modules)
 - current version of PHP
 - fixed sub-pixel rendering bug (https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3585)
 - installed extended set of fonts (optimized cache incl.)

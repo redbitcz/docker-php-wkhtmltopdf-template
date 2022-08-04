@@ -31,6 +31,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
     apt-get purge -y curl && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/*
+    rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/*  && \
+    a2enmod rewrite expires
 
 WORKDIR /var/www/html
