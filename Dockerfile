@@ -1,14 +1,22 @@
-FROM php:7.3-apache-stretch
+FROM php:7.4-apache-buster
 
+LABEL maintainer="Jakub Bouček <jakub.boucek@redbit.cz>"
+LABEL org.label-schema.name="PHP (Apache module), Debian Buster"
+LABEL org.label-schema.vcs-url="https://github.com/redbitcz/docker-php-wkhtmltopdf-template"
+
+# Workdir during installation
+WORKDIR /tmp
+
+# Copy fonts
 COPY fonts/ /usr/share/fonts/
 COPY fontconf/ /etc/fonts/conf.d/
 
 WORKDIR /tmp
 
 RUN DEBIAN_FRONTEND=noninteractive \
-    echo "deb http://http.debian.net/debian/ stretch main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://http.debian.net/debian/ stretch-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ stretch/updates main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://http.debian.net/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb http://http.debian.net/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ buster/updates main contrib non-free" >> /etc/apt/sources.list && \
     apt-get update && \
     apt-get install --no-install-recommends -y \
     openssl \
@@ -25,8 +33,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     fontconfig \
     xorg \
     libjpeg62-turbo && \
-    curl -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb -o wkhtmltox_0.12.5-1.stretch_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.5-1.stretch_amd64.deb && \
+    curl -L https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -o wkhtmltox_0.12.6-1.buster_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb && \
     fc-cache -f -v && \
     apt-get purge -y curl && \
     apt-get autoremove -y && \
