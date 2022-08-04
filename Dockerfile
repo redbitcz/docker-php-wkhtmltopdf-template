@@ -13,33 +13,70 @@ COPY fontconf/ /etc/fonts/conf.d/
 
 WORKDIR /tmp
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    echo "deb http://http.debian.net/debian/ buster main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://http.debian.net/debian/ buster-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ buster/updates main contrib non-free" >> /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y \
-    openssl \
-    build-essential \
-    curl \
-    xz-utils \
-    ca-certificates \
-    xfonts-100dpi \
-    xfonts-75dpi \
-    xfonts-base \
-    fonts-roboto \
-    fonts-inconsolata \
-    ttf-mscorefonts-installer \
-    fontconfig \
-    xorg \
-    libjpeg62-turbo && \
-    curl -L https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -o wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb && \
-    fc-cache -f -v && \
-    apt-get purge -y curl && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /var/tmp/* /tmp/*  && \
-    a2enmod rewrite expires
+# Use local mirrors to install Debian updates
+COPY sources.list-buster /etc/apt/sources.list
 
+# Prevent interactive block
+ARG DEBIAN_FRONTEND=noninteractive
+
+# OS binaries install && update critical binaries
+RUN set -eux; \
+    apt-get update; \
+    apt-get install --no-install-recommends -y \
+        build-essential \
+        ca-certificates \
+        ca-certificates \
+        fontconfig \
+        fonts-dejavu-extra \
+        fonts-inconsolata \
+        fonts-liberation \
+        fonts-roboto \
+        libjpeg62-turbo \
+        nano \
+        openssl \
+        ttf-mscorefonts-installer \
+        tzdata \
+        xfonts-100dpi \
+        xfonts-75dpi \
+        xfonts-base \
+        xorg \
+        xz-utils; \
+    docker-php-ext-install -j$(nproc) \
+        opcache; \
+    curl -L https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb \
+        -o wkhtmltox_0.12.6-1.buster_amd64.deb; \
+    dpkg -i wkhtmltox_0.12.6-1.buster_amd64.deb; \
+    fc-cache -f -v; \
+    a2enmod \
+        rewrite \
+        expires \
+        headers; \
+    apt-get clean -y && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*;
+
+# Configure Apache & PHP
+ENV PHP_MAX_EXECUTION_TIME 30
+ENV PHP_MEMORY_LIMIT 2G
+ENV PHP_SESSION_SAVE_PATH ""
+COPY core.ini /usr/local/etc/php/conf.d/core.ini
+
+# Configure OPcache
+ENV PHP_OPCACHE_ENABLE 1
+ENV PHP_OPCACHE_ENABLE_CLI 0
+ENV PHP_OPCACHE_MEMORY_CONSUPTION 128
+ENV PHP_OPCACHE_REVALIDATE_FREQ 2
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS 1
+COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+# Move Apache Document root to sub-directory `www` (PHP frameworks convention)
+ENV APACHE_DOCUMENT_ROOT /var/www/html/www
+
+# Setup Devstack (setup DocumentRoot)
+RUN set -eux; \
+    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf;
+
+# Workdir after installation
 WORKDIR /var/www/html
+
