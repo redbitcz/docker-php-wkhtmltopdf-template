@@ -11,9 +11,16 @@ Template container for wkhtmltopdf in HTTP server with PHP 7.3.
 - optimized for small image size a fast load
 - ready to run in serverless environment ([Google Cloud Run](https://cloud.google.com/run/), etc.)
 
-## Instalation
+## Download image 
+Call command `docker pull redbitcz/wkpdf` ([more info](https://hub.docker.com/r/redbitcz/wkpdf)).
+
+
+## Use for your custom Image
+In your Dockerfile put to `FROM` directive [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf).
+
+## Build
 1. Clone Git repo.
-2. In project directory call `docker build -t redbitcz/wkpdf .`
+2. In project directory call `docker build -t my-wkpdf .`
 3. Use it.
 4. Profit!
 
@@ -24,8 +31,8 @@ configured features – feel free to write your own app inside now.
 ## Build example
 1. Download & install [Docker for you PC](https://www.docker.com/products/docker-desktop). Run it.
 2. Open command line and try to call `docker -v` command – that must print version of installed Docker Desktop service.
-3. Run `docker build -t redbitcz/wkpdf .` *(don't miss the dot at end)*. Docker now start build new Docker image from current
-   directory (especially from [Dockerfile](Dockerfile)) and tag it with name `redbitcz/wkpdf`.
+3. Run `docker build -t my-wkpdf .` *(don't miss the dot at end)*. Docker now start build new Docker image from current
+   directory (especially from [Dockerfile](Dockerfile)) and tag it with name `my-wkpdf`.
 
 You can also just pull from image [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf). 
    
