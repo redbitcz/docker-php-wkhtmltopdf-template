@@ -1,7 +1,7 @@
-FROM php:7.4-apache-buster
+FROM php:8.1-apache-buster
 
 LABEL maintainer="Jakub Bouček <jakub.boucek@redbit.cz>"
-LABEL org.label-schema.name="PHP (Apache module), Debian Buster"
+LABEL org.label-schema.name="PHP 8.1 (Apache module), Debian Buster"
 LABEL org.label-schema.vcs-url="https://github.com/redbitcz/docker-php-wkhtmltopdf-template"
 
 # Workdir during installation
@@ -57,6 +57,9 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/* /var/lib/log/* /tmp/* /var/tmp/*;
 
 # Configure Apache & PHP
+ENV PHP_ERROR_REPORTING 32767 # E_ALL
+ENV PHP_DISPLAY_ERRORS 1
+ENV PHP_DISPLAY_STARTUP_ERRORS 1
 ENV PHP_ERROR_LOG ""
 ENV PHP_LOG_ERRORS 0
 ENV PHP_MAX_EXECUTION_TIME 30
@@ -75,9 +78,14 @@ COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 # Move Apache Document root to sub-directory `www` (PHP frameworks convention)
 ENV APACHE_DOCUMENT_ROOT /var/www/html/www
 
-# Setup Devstack (setup DocumentRoot)
+# Configure Apache listening port
+ENV PORT 80
+
+# Setup Devstack (setup DocumentRoot and Port)
 RUN set -eux; \
-    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf;
+    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf; \
+    sed -ri -e 's!:80>!:${PORT}>!g' /etc/apache2/sites-available/*.conf; \
+    sed -ri -e 's!Listen 80!Listen ${PORT}!g' /etc/apache2/ports.conf;
 
 # Workdir after installation
 WORKDIR /var/www/html
