@@ -1,11 +1,11 @@
 # wkhtmltopdf + fonts + PHP as Docker 
 
-Template container for wkhtmltopdf in HTTP server with PHP 7.3.
+Template container for wkhtmltopdf in HTTP server with PHP.
 
 ## Main features
-- current version of wkhtmltopdf
-- current version of Apache (with `mod_expires` and `mod_rewrite` modules)
-- current version of PHP
+- included `wkhtmltopdf`
+- Apache (with `mod_expires`, `mod_headers` and `mod_rewrite` modules)
+- PHP (7.4, 8.0, 8.1)
 - fixed sub-pixel rendering bug (https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3585)
 - installed extended set of fonts (optimized cache incl.)
 - optimized for small image size a fast load
@@ -14,35 +14,47 @@ Template container for wkhtmltopdf in HTTP server with PHP 7.3.
 ## Download image 
 Call command `docker pull redbitcz/wkpdf` ([more info](https://hub.docker.com/r/redbitcz/wkpdf)).
 
-
-## Use for your custom Image
-In your Dockerfile put to `FROM` directive [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf).
-
-## Build
-1. Clone Git repo.
-2. In project directory call `docker build -t my-wkpdf .`
-3. Use it.
-4. Profit!
-
 ## Template philosophy
 This project does not provide finished solution, but only prepared container with
 configured features – feel free to write your own app inside now.
 
-## Build example
-1. Download & install [Docker for you PC](https://www.docker.com/products/docker-desktop). Run it.
-2. Open command line and try to call `docker -v` command – that must print version of installed Docker Desktop service.
-3. Run `docker build -t my-wkpdf .` *(don't miss the dot at end)*. Docker now start build new Docker image from current
-   directory (especially from [Dockerfile](Dockerfile)) and tag it with name `my-wkpdf`.
+## Use for your custom Image
+In your Dockerfile put to `FROM` directive [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf).
 
-You can also just pull from image [`redbitcz/wkpdf`](https://hub.docker.com/r/redbitcz/wkpdf). 
-   
-## Usage example
-1. Run ``docker run --rm -v `pwd`:/out redbitcz/wkpdf wkhtmltopdf https://docs.docker.com/engine/reference/commandline/run/ /out/example.pdf``,
-   Docker create container from your image and here call `wkhtmltopdf` which create new PDF file `example.pdf` from docker's website.
-   Contrainer is removed when `wkhtmltopdf` process ended.
-2. Open and see new PDF `example.pdf` created in current directory.
+## Usage
+In your project create `Dockerfile` file with content:
+```dockerfile
+FROM redbitcz/wkpdf
+COPY . /var/www/html
+```
 
-##    
+Build your own image with command:
+```shell
+docker build .
+```
+
+You can also debug it with `docker-compose.yml`:
+```yaml
+version: '3.1'
+services:
+  web:
+    image: redbitcz/wkpdf:debug
+    ports:
+      - "8080:8080"
+    volumes:
+      - ".:/var/www/html"
+    restart: always
+    environment:
+      APP_DEBUG: 1
+      XDEBUG_CONFIG: "client_host=host.docker.internal"
+      PORT: 8080
+```
+
+and then run:
+
+```shell
+docker compose up
+```
 
 ### Thanks to
  - @boromino for great [inspiration how to delete more temporary file from container](https://github.com/boromino/php-wkhtmltopdf/blob/master/Dockerfile),
