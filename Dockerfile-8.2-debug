@@ -1,6 +1,6 @@
-FROM redbitcz/wkpdf:7.4
+FROM redbitcz/wkpdf:8.2
 
-LABEL org.label-schema.name="PHP 7.4 (Apache module + XDebug), Debian Buster"
+LABEL org.label-schema.name="PHP 8.2 (Apache module + XDebug), Debian Buster"
 
 # Configure Xdebug
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
@@ -10,7 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install Xdebug
 RUN set -eux; \
-    pecl install xdebug-3.1.6; \
+    pecl install xdebug; \
     pecl clear-cache; \
     docker-php-ext-enable xdebug; \
     rm -rf /var/tmp/* /tmp/*;
